@@ -149,15 +149,142 @@
     }
 }
 
+.hidden {
+    display: none;
+}
+
 .right {
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 83%;
-}
 
-.hidden {
-    display: none;
+    .right-top {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        height: 60px;
+
+        .right-top-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+
+            img {
+                height: 40px;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    .right-middle {
+        height: 83%;
+        width: 60%;
+        margin: 0 auto;
+        overflow: auto;
+        scrollbar-width: no;
+
+        .ask-answer-box {
+            margin-top: 10px;
+        }
+
+        .item {
+            display: flex;
+        }
+
+        .right-middle-ask {
+            flex-direction: row-reverse;
+            margin-right: 10px;
+        }
+
+        .right-middle-answer {
+            flex-direction: row;
+            margin-left: 10px;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            background: #efefef;
+            border-radius: 10px;
+            min-height: 25px;
+            padding: 9px 10px;
+            line-height: 1.5;
+            font-size: 13px;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        .ask {
+            background-color: lightblue;
+        }
+    }
+
+    // 搜索栏
+    .right-bottom {
+        background-color: rgb(247, 247, 247);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 50px;
+        width: 65%;
+        margin: 0 auto;
+        margin-top: 3px;
+        border-radius: 30px;
+
+        .search-box-left {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            flex-grow: 1;
+            height: 100%;
+
+            .search-box-left-input {
+                height: 40px;
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+
+                input {
+                    height: 100%;
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 0;
+                    border: none;
+                    margin: 0;
+                    outline: none;
+                    text-indent: 20px;
+                    font-size: 18px;
+                    background-color: rgb(247, 247, 247);
+                }
+            }
+        }
+
+        .search-box-left-attachment,
+        .search-box-right-send {
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+
+            img {
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    .right-footer {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+    }
 }
 </style>
 
@@ -182,11 +309,10 @@
                     <div class="left-middle-time">
                         <span>{{ h.time }}</span>
                     </div>
-                    <div class="left-middle-chat" v-for="(c) in h.contents" :key="c.contentId" 
-                        @mouseenter="handleMouseEnter(c.contentId)"
-                        @mouseleave="handleMouseLeave()">
+                    <div class="left-middle-chat" v-for="(c) in h.contents" :key="c.contentId"
+                        @mouseenter="handleMouseEnter(c.contentId)" @mouseleave="handleMouseLeave()">
                         <span>{{ c.content }}</span>
-                        <img src="../assets/images/ellipsis.svg" :class="{hidden: hoveredBox != c.contentId}">
+                        <img src="../assets/images/ellipsis.svg" :class="{ hidden: hoveredBox != c.contentId }">
                     </div>
                 </div>
             </div>
@@ -202,6 +328,43 @@
         </div>
         <!-- 会话窗口 -->
         <div class="right">
+            <!-- 头像栏 -->
+            <div class="right-top">
+                <div class="right-top-avatar">
+                    <img src="../assets/images/avatar.png" alt="" class="avatar" />
+                </div>
+            </div>
+            <!-- 正文版心 -->
+            <div class="right-middle" ref="scrollContainer">
+                <div class="ask-answer-box" v-for="(item, index) in current_history" :key="index">
+                    <div class="item right-middle-ask">
+                        <span class="message ask">{{ item.ask }}</span>
+                    </div>
+                    <div class="item right-middle-answer">
+                        <span v-show="item.answer != ''" class="message answer">{{ item.answer }}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 搜索栏 -->
+            <div class="right-bottom">
+                <div class="search-box-left">
+                    <div class="search-box-left-attachment">
+                        <img src="../assets/images/attachment.svg" alt="">
+                    </div>
+                    <div class="search-box-left-input">
+                        <input type="text" v-model="search_input" placeholder="请输入问题" @keydown.enter="pressEnterSendMsg(search_input)"/>
+                    </div>
+                </div>
+                <div class="search-box-right">
+                    <div class="search-box-right-send" @click="sendMsg(search_input)">
+                        <img src="../assets/images/send.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <!-- 合规信息 -->
+            <div class="right-footer">
+                <span>ChatGPT can make mistakes. Check important info.</span>
+            </div>
         </div>
     </div>
 
@@ -210,15 +373,35 @@
 <script setup lang="ts" name="">
 import { onMounted, ref } from 'vue';
 import axios from '../utils/request.js'
-import { id } from 'element-plus/es/locales.mjs';
 
 onMounted(() => {
     getHistory("afdjalfd")
 })
 
+// 后台获取的历史记录
 let history = ref()
 
+// 鼠标悬停省略号
 let hoveredBox = ref(0)
+
+// 当前提问框input的内容
+let search_input = ref("")
+
+// 版心末端 
+let scrollContainer = ref();
+
+// 后台获取的当前的历史记录
+let current_history = ref([
+    {
+        ask: "你好",
+        answer: "你好，有什么可以帮助你"
+    },
+    {
+        ask: "两个float的div盒子如何上下分布",
+        answer: "如果你想让两个 div 元素使用 float 属性上下分布，可以通过清除" +
+            "浮动来实现。虽然 float 通常用于左右排列，但通过适当的清除浮动技术，可以实现上下排列的效果。"
+    }
+])
 
 // 获取当前用户历史记录
 function getHistory(userId: string) {
@@ -236,13 +419,29 @@ function getHistory(userId: string) {
 }
 
 // 鼠标进入历史记录区域显示省略号
-function handleMouseEnter(contentId:number) {
+function handleMouseEnter(contentId: number) {
     hoveredBox.value = contentId;
 }
 
 // 鼠标离开历史记录区域隐藏省略号
 function handleMouseLeave() {
     hoveredBox.value = -1;
+}
+
+// 点击发送按钮
+function sendMsg(value: string) {
+    search_input.value = "";
+    let now_ask = { ask: value, answer: "daf" }
+    current_history.value.push(now_ask)
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+}
+
+// 提问框获得焦点时如果按下enter键，发送信息
+function pressEnterSendMsg(value: string) {
+    search_input.value = "";
+    let now_ask = { ask: value, answer: "aaa" }
+    current_history.value.push(now_ask)
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
 }
 
 </script>
