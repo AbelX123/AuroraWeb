@@ -153,6 +153,10 @@
     display: none;
 }
 
+.active {
+    background-color: rgb(203, 194, 194);
+}
+
 .right {
     display: flex;
     flex-direction: column;
@@ -310,9 +314,11 @@
                         <span>{{ h.time }}</span>
                     </div>
                     <div class="left-middle-chat" v-for="(c) in h.contents" :key="c.contentId"
-                        @mouseenter="handleMouseEnter(c.contentId)" @mouseleave="handleMouseLeave()">
-                        <span>{{ c.content }}</span>
-                        <img src="../assets/images/ellipsis.svg" :class="{ hidden: hoveredBox != c.contentId }">
+                        @click="showCurrentContent(c.contentId, c.content)"
+                        @mouseenter="handleMouseEnterEllipsis(c.contentId)" @mouseleave="handleMouseLeaveEllipsis()"
+                        :class="{ active : isActice(c.contentId) }">
+                        <span>{{ c.content[0].ask + " " + c.content[0].answer }}</span>
+                        <img src="../assets/images/ellipsis.svg" :class="{ hidden: isHidden(c.contentId) }">
                     </div>
                 </div>
             </div>
@@ -352,7 +358,8 @@
                         <img src="../assets/images/attachment.svg" alt="">
                     </div>
                     <div class="search-box-left-input">
-                        <input type="text" v-model="search_input" placeholder="请输入问题" @keydown.enter="pressEnterSendMsg(search_input)"/>
+                        <input type="text" v-model="search_input" placeholder="请输入问题"
+                            @keydown.enter="pressEnterSendMsg(search_input)" />
                     </div>
                 </div>
                 <div class="search-box-right">
@@ -371,7 +378,7 @@
 </template>
 
 <script setup lang="ts" name="">
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref, toRef } from 'vue';
 import axios from '../utils/request.js'
 
 onMounted(() => {
@@ -382,10 +389,10 @@ onMounted(() => {
 let history = ref()
 
 // 鼠标悬停省略号
-let hoveredBox = ref(0)
+let hoveredBox = ref()
 
 // 当前提问框input的内容
-let search_input = ref("")
+let search_input = ref()
 
 // 版心末端 
 let scrollContainer = ref();
@@ -412,20 +419,21 @@ function getHistory(userId: string) {
             }
         }).then(response => {
             let allContents = response.data.data.allContents;
-            history.value = allContents;
+            history = allContents;
+            current_history.value = allContents[0].contents[0].content;
         }).catch((error) => {
             console.log(error)
         })
 }
 
-// 鼠标进入历史记录区域显示省略号
-function handleMouseEnter(contentId: number) {
+// 鼠标进入历史记录区域显示省略号并修改背景颜色
+function handleMouseEnterEllipsis(contentId: string) {
     hoveredBox.value = contentId;
 }
 
-// 鼠标离开历史记录区域隐藏省略号
-function handleMouseLeave() {
-    hoveredBox.value = -1;
+// 鼠标离开历史记录区域隐藏省略号并取消背景颜色
+function handleMouseLeaveEllipsis() {
+    hoveredBox.value = "-1";
 }
 
 // 点击发送按钮
@@ -442,6 +450,25 @@ function pressEnterSendMsg(value: string) {
     let now_ask = { ask: value, answer: "aaa" }
     current_history.value.push(now_ask)
     scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+}
+
+const activeItemId = ref();
+
+// 点击日期下的某个问答展示该问题内容
+function showCurrentContent(id:string, content: []) {
+    // 当前激活
+    activeItemId.value = id === activeItemId.value? null : id;
+
+    // 当前展示内容
+    current_history.value = content;
+}
+
+function isHidden(id: string) {    
+    return id != hoveredBox.value
+}
+
+function isActice(id: string) {
+    return id === activeItemId.value;
 }
 
 </script>
