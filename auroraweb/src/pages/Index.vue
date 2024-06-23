@@ -27,6 +27,7 @@
         .left-top-callapse-panel,
         .left-top-new-chat {
             display: flex;
+            position: relative;
             justify-content: center;
             align-items: center;
             height: 40px;
@@ -35,6 +36,31 @@
             border: 1px solid black;
             box-sizing: border-box;
             border-radius: 10px;
+
+            .tooltiptext {
+                visibility: hidden;
+                position: absolute;
+                width: 120px;
+                height: 30px;
+                font-size: 15px;
+                background-color: black;
+                text-align: center;
+                line-height: 30px;
+                color: #fff;
+                border-radius: 6px;
+                z-index: 1;
+                top: 150%;
+            }
+
+            .tooltiptext::after {
+                content: "";
+                position: absolute;
+                border-style: solid;
+                border-width: 5px;
+                border-color: transparent transparent black transparent;
+                right: 50%;
+                bottom: 100%;
+            }
 
             img {
                 display: inline-block;
@@ -45,6 +71,10 @@
         .left-top-callapse-panel:hover,
         .left-top-new-chat:hover {
             background-color: rgb(203, 194, 194);
+        }
+
+        .left-top-new-chat:hover .tooltiptext {
+            visibility: visible;
         }
 
         .left-top-callapse-panel {
@@ -303,6 +333,7 @@
                     <img src="../assets/images/callapse-panel.svg">
                 </div>
                 <div class="left-top-new-chat">
+                    <span class="tooltiptext">新建会话</span>
                     <img src="../assets/images/new-chat.svg">
                 </div>
             </div>
@@ -316,7 +347,7 @@
                     <div class="left-middle-chat" v-for="(c) in h.contents" :key="c.contentId"
                         @click="showCurrentContent(c.contentId, c.content)"
                         @mouseenter="handleMouseEnterEllipsis(c.contentId)" @mouseleave="handleMouseLeaveEllipsis()"
-                        :class="{ active : isActice(c.contentId) }">
+                        :class="{ active: isActice(c.contentId) }">
                         <span>{{ c.content[0].ask + " " + c.content[0].answer }}</span>
                         <img src="../assets/images/ellipsis.svg" :class="{ hidden: isHidden(c.contentId) }">
                     </div>
@@ -455,15 +486,15 @@ function pressEnterSendMsg(value: string) {
 const activeItemId = ref();
 
 // 点击日期下的某个问答展示该问题内容
-function showCurrentContent(id:string, content: []) {
+function showCurrentContent(id: string, content: []) {
     // 当前激活
-    activeItemId.value = id === activeItemId.value? null : id;
+    activeItemId.value = id === activeItemId.value ? null : id;
 
     // 当前展示内容
     current_history.value = content;
 }
 
-function isHidden(id: string) {    
+function isHidden(id: string) {
     return id != hoveredBox.value
 }
 
