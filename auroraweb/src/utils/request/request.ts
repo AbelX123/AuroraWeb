@@ -15,9 +15,10 @@ export interface HttpOption {
 }
 
 export interface Response<T = any> {
-    data: T
-    message: string | null
     status: string
+    message: string
+    data: T
+    sign: string
 }
 
 // http公共方法
@@ -25,11 +26,10 @@ function http<T = any>(
     { url, data, method, headers, beforeRequest, afterRequest }: HttpOption,
 ) {
     const successHandler = (res: AxiosResponse<Response<T>>) => {
-
-        if (res.data.status === 'Success' || typeof res.data === 'string')
+        if (res.data.status === '200' || typeof res.data === 'string')
             return res.data
 
-        if (res.data.status === 'Unauthorized') {
+        if (res.data.message === 'Unauthorized') {
             window.location.reload()
         }
 

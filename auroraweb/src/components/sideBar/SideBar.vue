@@ -10,7 +10,7 @@
                 <span class="tooltiptext">收起侧边栏</span>
                 <img src="@/assets/images/callapse-panel.svg">
             </div>
-            <div class="left-top-new-chat">
+            <div class="left-top-new-chat" @click="showCompany">
                 <span class="tooltiptext">新建会话</span>
                 <img src="@/assets/images/new-chat.svg">
             </div>
@@ -18,7 +18,7 @@
         <!-- 会话列表栏 -->
         <div class="left-middle">
             <!-- 胶水 -->
-            <div class="left-moddle-time-chat" v-for="(h, index) in history" :key="index">
+            <div class="left-moddle-time-chat" v-for="(h) in history" :key="h.contentId">
                 <div class="left-middle-time">
                     <span>{{ h.time }}</span>
                 </div>
@@ -44,14 +44,69 @@
 </template>
 
 <script setup lang="ts" name="">
+import { ref } from 'vue'
 import { useChat } from '@/hocks/useChat';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-const {getHistory, history, current_history} = useChat();
+// 会话钩子解构
+const { getHistory, history, current_history } = useChat();
+
+// 编程式路由
+const router = useRouter()
+
+// 中间变量，用于存储当前用户的编号
+const activeItemId = ref();
+
+// 鼠标悬停省略号
+let hoveredBox = ref()
 
 onMounted(() => {
-    history.value = getHistory("afdjalfd")
+    // 获取当前用户历史记录
+    getHistoryById("afdjalfd");
+
+    showCompany();
 })
 
+// 渲染初始会话组件
+function showCompany() {
+    router.push("/home/company")
+}
 
+async function getHistoryById(id: string) {
+    const {data} = await getHistory(id);
+    const allContents = data.allContents;
+    history.value = allContents;
+    current_history.value = allContents
+}
+
+// 点击日期下的某个问答展示该问题内容
+function showCurrentContent(id: string, content: []) {
+    // 当前激活
+    activeItemId.value = id === activeItemId.value ? null : id;
+
+    // 当前展示内容
+    current_history.value = content;
+
+    // 渲染路由组件
+    router.push("/home/chat")
+}
+
+// 鼠标进入历史记录区域显示省略号并修改背景颜色
+function handleMouseEnterEllipsis(contentId: string) {
+    hoveredBox.value = contentId;
+}
+
+function isActice(id: string) {
+    return id === activeItemId.value;
+}
+
+// 鼠标离开历史记录区域隐藏省略号并取消背景颜色
+function handleMouseLeaveEllipsis() {
+    hoveredBox.value = "-1";
+}
+
+function isHidden(id: string) {
+    return id != hoveredBox.value
+}
 </script>

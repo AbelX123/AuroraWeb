@@ -5,7 +5,7 @@ export function getHistoryApi(userId: string) {
 
     return get(
         {
-            url: '/getHistory',
+            url: '/api/user/getHistory',
             data: {
                 userId: userId
             }
