@@ -340,7 +340,7 @@
             <!-- 会话列表栏 -->
             <div class="left-middle">
                 <!-- 胶水 -->
-                <div class="left-moddle-time-chat" v-for="h in history">
+                <div class="left-moddle-time-chat" v-for="h in history" :key="h.contentId">
                     <div class="left-middle-time">
                         <span>{{ h.time }}</span>
                     </div>
@@ -409,8 +409,8 @@
 </template>
 
 <script setup lang="ts" name="">
-import { onMounted, reactive, ref, toRef } from 'vue';
-import axios from '../utils/request.js'
+import { onMounted, ref } from 'vue';
+import axios from 'axios'
 
 onMounted(() => {
     getHistory("afdjalfd")
@@ -450,7 +450,7 @@ function getHistory(userId: string) {
             }
         }).then(response => {
             let allContents = response.data.data.allContents;
-            history = allContents;
+            history.value = allContents;
             current_history.value = allContents[0].contents[0].content;
         }).catch((error) => {
             console.log(error)

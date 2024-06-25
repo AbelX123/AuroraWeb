@@ -14,5 +14,6 @@ declare module 'vue' {
     ElPopover: typeof import('element-plus/es')['ElPopover']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SideBar: typeof import('./src/components/sideBar/SideBar.vue')['default']
   }
 }

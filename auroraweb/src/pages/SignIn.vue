@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts" name="SignIn">
-import { ref, watch, watchEffect } from 'vue';
+import { ref } from 'vue';
 
 let emailPhoneRef = ref()
 

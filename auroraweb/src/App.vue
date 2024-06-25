@@ -1,13 +1,13 @@
 <style scoped>
-#app {
-    display: flex;
-}
 </style>
 
 <template>
-    <Index />
+    <!-- <RouterView/> -->
+     <IndexPage/>
 </template>
 
 <script setup lang="ts" name="App">
-import Index from './pages/Index.vue'
+// import { RouterView } from 'vue-router';
+
+import IndexPage from '@/pages/IndexPage.vue'
 </script>
