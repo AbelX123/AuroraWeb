@@ -1,0 +1,133 @@
+.right {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 83%;
+
+    .right-top {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        height: 60px;
+
+        .right-top-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+            box-sizing: border-box;
+            border-radius: 50%;
+
+            img {
+                height: 40px;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    .right-middle {
+        height: 83%;
+        width: 60%;
+        margin: 0 auto;
+        overflow: auto;
+        scrollbar-width: no;
+
+        .ask-answer-box {
+            margin-top: 10px;
+        }
+
+        .item {
+            display: flex;
+        }
+
+        .right-middle-ask {
+            flex-direction: row-reverse;
+            margin-right: 10px;
+        }
+
+        .right-middle-answer {
+            flex-direction: row;
+            margin-left: 10px;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            background: #efefef;
+            border-radius: 10px;
+            min-height: 25px;
+            padding: 9px 10px;
+            line-height: 1.5;
+            font-size: 13px;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        .ask {
+            background-color: lightblue;
+        }
+    }
+
+    // 搜索栏
+    .right-bottom {
+        background-color: rgb(247, 247, 247);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 50px;
+        width: 65%;
+        margin: 0 auto;
+        margin-top: 3px;
+        border-radius: 30px;
+
+        .search-box-left {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            flex-grow: 1;
+            height: 100%;
+
+            .search-box-left-input {
+                height: 40px;
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+
+                input {
+                    height: 100%;
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 0;
+                    border: none;
+                    margin: 0;
+                    outline: none;
+                    text-indent: 20px;
+                    font-size: 18px;
+                    background-color: rgb(247, 247, 247);
+                }
+            }
+        }
+
+        .search-box-left-attachment,
+        .search-box-right-send {
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+
+            img {
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    .right-footer {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+    }
+}

@@ -70,14 +70,15 @@ onMounted(() => {
 
 // 渲染初始会话组件
 function showCompany() {
-    router.push("/home/company")
+    router.push({
+        path: '/home/company'
+    })
 }
 
 async function getHistoryById(id: string) {
-    const {data} = await getHistory(id);
+    const { data } = await getHistory(id);
     const allContents = data.allContents;
     history.value = allContents;
-    current_history.value = allContents
 }
 
 // 点击日期下的某个问答展示该问题内容
@@ -88,8 +89,15 @@ function showCurrentContent(id: string, content: []) {
     // 当前展示内容
     current_history.value = content;
 
+    const nowContent = JSON.stringify(content)
+
     // 渲染路由组件
-    router.push("/home/chat")
+    router.push({
+        name: 'chat',
+        meta: {
+            content: nowContent
+        }
+    });
 }
 
 // 鼠标进入历史记录区域显示省略号并修改背景颜色

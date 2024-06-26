@@ -20,7 +20,6 @@ const routes = [
                 path: 'chat',
                 name: 'chat',
                 component: () => import("@/pages/home/chat/AuroraChat.vue")
-
             },
             {
                 path: 'company',
