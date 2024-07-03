@@ -1,5 +1,5 @@
 <style scoped lang="less">
-@import './AuroraChat.less';
+@import './auroraChat.less';
 </style>
 
 <template>
@@ -47,18 +47,29 @@
 </template>
 
 <script setup lang="ts" name="">
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
-import { ref } from 'vue'
+import { useChat } from '@/hocks/useChat';
+// 取出contentId
+const route = useRoute();
+const contentId = ref((route.query.contentId as string) || '')
 
-const route = useRoute()
-const content = route.meta.content
+// 解构
+const { getContent } = useChat()
 
-console.log(content);
-
+watch(() => route.query.contentId as string, (newValue) => {
+    contentId.value = newValue;
+    // 获取内容
+    getContent(contentId.value)
+});
 
 const current_history = ref()
 
 let search_input = ref()
+
+onMounted(() => {
+    getContent(contentId.value)
+})
 
 // 版心末端 
 let scrollContainer = ref();
