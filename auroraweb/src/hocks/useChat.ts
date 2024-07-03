@@ -1,18 +1,22 @@
-import { getHistoryApi } from '@/api/chat';
+import { getHistoryApi, getContentApi } from '@/api/chat';
 import { ref, } from 'vue';
 
 export function useChat() {
-    
+
     // 用户的历史记录
-    const history = ref()
-    
-    // 会话
-    const current_history = ref([])
-    
+    const allProfiles = ref()
+
     // 获取当前用户历史记录
-    function getHistory(userId: string) {
-        return getHistoryApi(userId);
+    async function getHistory(userId: string) {
+        const data = await getHistoryApi(userId);
+        allProfiles.value = data.data.allProfiles
     }
-    
-    return {history, current_history, getHistory}
+
+    // 获取具体的对话
+    async function getContent(contentId: string) {
+        await getContentApi(contentId);
+    }
+
+
+    return { allProfiles, getHistory, getContent }
 }

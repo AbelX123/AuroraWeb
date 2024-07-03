@@ -26,9 +26,9 @@ function http<T = any>(
     { url, data, method, headers, beforeRequest, afterRequest }: HttpOption,
 ) {
     const successHandler = (res: AxiosResponse<Response<T>>) => {
-        if (res.data.status === '200' || typeof res.data === 'string')
-            return res.data
-
+        if (res.data.status === '0000') {
+            return  res.data
+        }
         if (res.data.message === 'Unauthorized') {
             window.location.reload()
         }

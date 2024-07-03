@@ -18,16 +18,16 @@
         <!-- 会话列表栏 -->
         <div class="left-middle">
             <!-- 胶水 -->
-            <div class="left-moddle-time-chat" v-for="(h) in history" :key="h.contentId">
+            <div class="left-moddle-time-chat" v-for="(profiles, index) in allProfiles" :key="index">
                 <div class="left-middle-time">
-                    <span>{{ h.time }}</span>
+                    <span>{{ profiles.time }}</span>
                 </div>
-                <div class="left-middle-chat" v-for="(c) in h.contents" :key="c.contentId"
-                    @click="showCurrentContent(c.contentId, c.content)"
-                    @mouseenter="handleMouseEnterEllipsis(c.contentId)" @mouseleave="handleMouseLeaveEllipsis()"
-                    :class="{ active: isActice(c.contentId) }">
-                    <span>{{ c.content[0].ask + " " + c.content[0].answer }}</span>
-                    <img src="@/assets/images/ellipsis.svg" :class="{ hidden: isHidden(c.contentId) }">
+                <div class="left-middle-chat" v-for="(p) in profiles.profiles" :key="p.contentId"
+                    @click="showCurrentContent(p.contentId)"
+                    @mouseenter="handleMouseEnterEllipsis(p.contentId)" @mouseleave="handleMouseLeaveEllipsis()"
+                    :class="{ active: isActice(p.contentId) }">
+                    <span>{{ p.contentProfile }}</span>
+                    <img src="@/assets/images/ellipsis.svg" :class="{ hidden: isHidden(p.contentId) }">
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 // 会话钩子解构
-const { getHistory, history, current_history } = useChat();
+const { getHistory, allProfiles, getContent } = useChat();
 
 // 编程式路由
 const router = useRouter()
@@ -63,7 +63,7 @@ let hoveredBox = ref()
 
 onMounted(() => {
     // 获取当前用户历史记录
-    getHistoryById("afdjalfd");
+    getHistory("12345678")
 
     showCompany();
 })
@@ -75,29 +75,9 @@ function showCompany() {
     })
 }
 
-async function getHistoryById(id: string) {
-    const { data } = await getHistory(id);
-    const allContents = data.allContents;
-    history.value = allContents;
-}
-
 // 点击日期下的某个问答展示该问题内容
-function showCurrentContent(id: string, content: []) {
-    // 当前激活
-    activeItemId.value = id === activeItemId.value ? null : id;
-
-    // 当前展示内容
-    current_history.value = content;
-
-    const nowContent = JSON.stringify(content)
-
-    // 渲染路由组件
-    router.push({
-        name: 'chat',
-        meta: {
-            content: nowContent
-        }
-    });
+function showCurrentContent(contentId: string) {
+    const data = getContent(contentId);
 }
 
 // 鼠标进入历史记录区域显示省略号并修改背景颜色

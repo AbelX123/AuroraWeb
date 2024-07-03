@@ -58,11 +58,6 @@ console.log(content);
 
 const current_history = ref()
 
-// if (null != content) {
-//     current_history.value = JSON.parse(content)
-// }
-
-// 当前提问框input的内容
 let search_input = ref()
 
 // 版心末端 
