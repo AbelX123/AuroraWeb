@@ -4,12 +4,17 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
         path: '/',
-        redirect: '/home'
+        redirect: '/signIn'
     },
     {
         path: '/signUp',
         name: 'signUp',
-        component: () => import("@/pages/SignUp.vue")
+        component: () => import("@/pages/login/SignUp.vue")
+    },
+    {
+        path: '/signIn',
+        name: 'signIn',
+        component: () => import("@/pages/login/SignIn.vue")
     },
     {
         path: '/home',
@@ -19,19 +24,14 @@ const routes = [
             {
                 path: 'chat',
                 name: 'chat',
-                component: () => import("@/pages/home/chat/AuroraChat.vue")
+                component: () => import("@/pages/chat/AuroraChat.vue")
             },
             {
                 path: 'company',
                 name: 'compmay',
-                component: () => import("@/pages/home/company/AuroraCompany.vue")
+                component: () => import("@/pages/company/AuroraCompany.vue")
             }
         ]
-    },
-    {
-        path: '/signIn',
-        name: 'signIn',
-        component: () => import("@/pages/SignIn.vue")
     },
 ]
 const router = createRouter({

@@ -22,5 +22,5 @@ export function useChat() {
     }
 
 
-    return { allProfiles, getHistory, getContent }
+    return { allProfiles, getHistory, getContent, content }
 }

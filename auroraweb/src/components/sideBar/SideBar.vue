@@ -57,7 +57,7 @@ const { handleMouseEnterEllipsis, isActice, handleMouseLeaveEllipsis, isHidden, 
 
 onMounted(() => {
     // 获取当前用户历史记录
-    getHistory("12345678")
+    getHistory("12345678");
     showCompany();
 })
 
