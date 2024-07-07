@@ -74,7 +74,7 @@ function toHome() {
     }
 
     .submit:hover {
-      background-color: rgb(237, 241, 243);
+      background-color: rgb(206, 213, 216);
       cursor: pointer;
     }
 
