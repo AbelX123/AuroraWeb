@@ -3,16 +3,12 @@ import { ref, } from 'vue';
 
 export function useChat() {
 
-    // 用户的历史记录
-    const allProfiles = ref()
-
     // 当前对话
     const content = ref()
 
     // 获取当前用户历史记录
-    async function getHistory(userId: string) {
-        const data = await getHistoryApi(userId);
-        allProfiles.value = data.data.allProfiles
+    async function getHistory(contentQuery: any) {
+        return await getHistoryApi(contentQuery);
     }
 
     // 获取具体的对话
@@ -22,5 +18,5 @@ export function useChat() {
     }
 
 
-    return { allProfiles, getHistory, getContent, content }
+    return { getHistory, getContent, content }
 }

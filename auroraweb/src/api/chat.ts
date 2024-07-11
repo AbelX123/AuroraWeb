@@ -1,13 +1,11 @@
 import {get} from '@/utils/request/request'
 
 // 获取用户的历史记录
-export function getHistoryApi(userId: string) {
+export function getHistoryApi(contentQuery: any) {
     return get(
         {
             url: '/api/content/getProfileByUserId',
-            data: {
-                userId: userId
-            }
+            data: contentQuery
         }
     )
 }
