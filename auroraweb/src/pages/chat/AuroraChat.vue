@@ -39,26 +39,48 @@ const route = useRoute();
 const contentId = ref((route.query.contentId as string) || "");
 
 // 解构
-const { getContent, content } = useChat();
+const { getContent } = useChat();
 
-console.log(content);
+// 当前对话
+const current_history = ref([
+  {
+    ask: "吃了吗？",
+    answer: "吃了！",
+  },
+]);
 
+// 查询参数
+const contentQuery = ref({
+  userId: "abc",
+  contentId: contentId,
+  pageNo: 1,
+  pageSize: 30,
+});
+
+// 获取内容方法封装
+function getContentDetail() {
+  getContent(contentQuery.value)
+    .then((result) => {
+      current_history.value = result.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 watch(
   () => route.query.contentId as string,
   (newValue) => {
     contentId.value = newValue;
     // 获取内容
-    getContent(contentId.value);
+    getContentDetail();
   }
 );
-
-const current_history = ref();
 
 let search_input = ref();
 
 onMounted(() => {
-  getContent(contentId.value);
+  getContentDetail();
 });
 
 // 版心末端

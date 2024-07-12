@@ -91,7 +91,7 @@ onMounted(() => {
     .catch((error) => {
       console.log(error);
     });
-  // showCompany();
+  showCompany();
 });
 
 const container = ref();

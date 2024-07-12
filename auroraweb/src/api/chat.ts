@@ -11,13 +11,11 @@ export function getHistoryApi(contentQuery: any) {
 }
 
 // 获取对话
-export function getContentApi(contentId: string) {
+export function getContentApi(contentQuery: any) {
     return get(
         {
-            url: '/api/content/getContentByContentId',
-            data: {
-                contentId: contentId
-            }
+            url: '/api/content/getContentDetailByContentId',
+            data: contentQuery
         }
     )
 }

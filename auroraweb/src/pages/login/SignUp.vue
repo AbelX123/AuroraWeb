@@ -34,14 +34,13 @@ const state = reactive({
 });
 onMounted(() => {
   state.identifyCode = draw();
-  console.log(state.identifyCode);
 });
 watch(
   () => {
     return state.identifyCode;
   },
   (newVal) => {
-    console.log(newVal);
+    
   }
 );
 // 随机数字
