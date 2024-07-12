@@ -17,9 +17,11 @@
           <span class="message ask">{{ item.ask }}</span>
         </div>
         <div class="item right-middle-answer">
-          <span v-show="item.answer != ''" class="message answer">{{
-            item.answer
-          }}</span>
+          <span
+            v-show="item.answer != '' && item.answer != undefined"
+            class="message answer"
+            >{{ item.answer }}</span
+          >
         </div>
       </div>
     </div>
@@ -29,7 +31,7 @@
 </template>
 
 <script setup lang="ts" name="">
-import { onMounted, ref, watch, nextTick } from "vue";
+import { onMounted, ref, watch, nextTick, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import { useChat } from "@/hocks/useChat";
 import Avatar from "@/components/avatar/AvatarComponent.vue";
@@ -38,8 +40,9 @@ import { useWebSocket } from "@/hocks/useWebSocket";
 // 取出contentId
 const route = useRoute();
 const contentId = ref((route.query.contentId as string) || "");
+const searchInput = ref((route.query.search_input as string) || "");
 
-const { message, connectWebSocket, sendMessage } = useWebSocket(
+const { message, connectWebSocket, sendMessage, socket } = useWebSocket(
   "ws://localhost:8080/ask"
 );
 
@@ -95,11 +98,18 @@ watch(
 
 watch(current_history, scrollToBottom);
 
-onMounted(() => {
-  // 获取内容
-  getContentDetail();
+onBeforeMount(() => {
   // 初始化websocket连接
   connectWebSocket();
+});
+
+onMounted(() => {
+  if (contentId.value != null && contentId.value != "") {
+    // 获取内容
+    getContentDetail();
+  } else {
+    handleChat(searchInput.value);
+  }
   scrollToBottom();
 });
 
@@ -111,7 +121,11 @@ const handleChat = (ask: string) => {
     ask: ask,
     answer: "",
   };
-  current_history.value.push(current_history_last);
+  if (current_history.value.length == 1 && current_history.value[0].ask == "") {
+    current_history.value[0] = current_history_last;
+  } else {
+    current_history.value.push(current_history_last);
+  }
 
   // 使用websocket发送给后端
   let websocketAsk = {
@@ -119,7 +133,7 @@ const handleChat = (ask: string) => {
     contentId: contentId.value,
     ask: ask,
     previousDetailId:
-      current_history.value[current_history.value.length - 2].detailId,
+      current_history.value[current_history.value.length - 1].detailId,
   };
   sendMessage(JSON.stringify(websocketAsk));
 

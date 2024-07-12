@@ -9,13 +9,18 @@
     <Avatar />
     <!-- 正文版心 -->
     <div class="right-middle" ref="scrollContainer">
-      <h1>AAAA</h1>
+      <div class="logo">
+        <span>AAAAA</span>
+      </div>
     </div>
-    <Footer />
+    <Footer :name="company" />
   </div>
 </template>
 
 <script setup lang="ts" name="">
 import Avatar from "@/components/avatar/AvatarComponent.vue";
 import Footer from "@/components/footer/FooterComponet.vue";
+import { ref } from "vue";
+
+const company = ref("company");
 </script>

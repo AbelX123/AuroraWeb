@@ -8,7 +8,6 @@ export function useWebSocket(url: string) {
         socket = new WebSocket(url);
 
         socket.onopen = () => {
-            console.log('WebSocket connection established');
         };
 
         socket.onmessage = (event: MessageEvent) => {
@@ -16,7 +15,6 @@ export function useWebSocket(url: string) {
         };
 
         socket.onclose = () => {
-            console.log('WebSocket connection closed');
         };
 
         socket.onerror = (error: Event) => {
@@ -27,8 +25,10 @@ export function useWebSocket(url: string) {
     const sendMessage = (msg: any) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(msg);
+        }else{ // 等500毫秒再发
+            setTimeout(sendMessage, 500, msg)
         }
     };
 
-    return { message, connectWebSocket, sendMessage };
+    return { message, connectWebSocket, sendMessage, socket };
 }
