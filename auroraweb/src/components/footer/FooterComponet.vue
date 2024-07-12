@@ -1,5 +1,5 @@
 <style scoped>
-@import './footerComponent.less';
+@import "./footerComponent.less";
 </style>
 
 <template>
@@ -14,12 +14,12 @@
           type="text"
           v-model="search_input"
           placeholder="请输入问题"
-          @keydown.enter="pressEnterSendMsg(search_input)"
+          @keydown.enter="sendMsg"
         />
       </div>
     </div>
     <div class="search-box-right">
-      <div class="search-box-right-send" @click="sendMsg(search_input)">
+      <div class="search-box-right-send" @click="sendMsg">
         <img src="@/assets/images/send.svg" alt="" />
       </div>
     </div>
@@ -31,28 +31,18 @@
 </template>
 
 <script setup lang="ts" name="Footer">
-import { ref } from 'vue';
+import { ref, defineEmits } from "vue";
+
+const emit = defineEmits(["handle_chat"]);
+
 // 当前提问框input的内容
-let search_input = ref()
+const search_input = ref();
 
-// 版心末端 
-let scrollContainer = ref();
-
-const current_history = ref()
-
-// 提问框获得焦点时如果按下enter键，发送信息
-function pressEnterSendMsg(value: string) {
-    search_input.value = "";
-    let now_ask = { ask: value, answer: "aaa" }
-    current_history.value.push(now_ask)
-    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-}
-
-// 点击发送按钮
-function sendMsg(value: string) {
-    search_input.value = "";
-    let now_ask = { ask: value, answer: "daf" }
-    current_history.value.push(now_ask)
-    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-}
+// 回车或者发送
+const sendMsg = () => {
+  // 将输入框的内容传递给父组件用于传递后端提问和展示在页面
+  const data = search_input.value;
+  emit("handle_chat", data);
+  search_input.value = ""
+};
 </script>

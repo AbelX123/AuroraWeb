@@ -13,6 +13,5 @@ export function useChat() {
         return await getContentApi(contentQuery);
     }
 
-
     return { getHistory, getContent }
 }

@@ -24,19 +24,34 @@
       </div>
     </div>
     <!-- 搜索栏 -->
-    <Footer />
+    <Footer @handle_chat="handleChat" />
   </div>
 </template>
 
 <script setup lang="ts" name="">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useChat } from "@/hocks/useChat";
 import Avatar from "@/components/avatar/AvatarComponent.vue";
 import Footer from "@/components/footer/FooterComponet.vue";
+import { useWebSocket } from "@/hocks/useWebSocket";
 // 取出contentId
 const route = useRoute();
 const contentId = ref((route.query.contentId as string) || "");
+
+const { message, connectWebSocket, sendMessage } = useWebSocket(
+  "ws://localhost:8080/ask"
+);
+
+// 版心末端
+const scrollContainer = ref<HTMLElement | null>(null);
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+  }
+};
 
 // 解构
 const { getContent } = useChat();
@@ -44,8 +59,9 @@ const { getContent } = useChat();
 // 当前对话
 const current_history = ref([
   {
-    ask: "吃了吗？",
-    answer: "吃了！",
+    detailId: "",
+    ask: "",
+    answer: "",
   },
 ]);
 
@@ -77,28 +93,48 @@ watch(
   }
 );
 
-let search_input = ref();
+watch(current_history, scrollToBottom);
 
 onMounted(() => {
+  // 获取内容
   getContentDetail();
+  // 初始化websocket连接
+  connectWebSocket();
+  scrollToBottom();
 });
 
-// 版心末端
-let scrollContainer = ref();
+// 处理输入框
+const handleChat = (ask: string) => {
+  // 将问题加入到页面中
+  let current_history_last = {
+    detailId: "",
+    ask: ask,
+    answer: "",
+  };
+  current_history.value.push(current_history_last);
 
-// 提问框获得焦点时如果按下enter键，发送信息
-function pressEnterSendMsg(value: string) {
-  search_input.value = "";
-  let now_ask = { ask: value, answer: "aaa" };
-  current_history.value.push(now_ask);
-  scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-}
+  // 使用websocket发送给后端
+  let websocketAsk = {
+    userId: "abc",
+    contentId: contentId.value,
+    ask: ask,
+    previousDetailId:
+      current_history.value[current_history.value.length - 2].detailId,
+  };
+  sendMessage(JSON.stringify(websocketAsk));
 
-// 点击发送按钮
-function sendMsg(value: string) {
-  search_input.value = "";
-  let now_ask = { ask: value, answer: "daf" };
-  current_history.value.push(now_ask);
-  scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-}
+  // 处理返回信息
+
+  // 监听 message 变化并处理返回信息
+  watch(message, (newValue) => {
+    try {
+      const data = JSON.parse(newValue);
+      current_history.value[current_history.value.length - 1].answer =
+        data.data;
+      scrollToBottom();
+    } catch (error) {
+      console.error("Error parsing WebSocket message:", error);
+    }
+  });
+};
 </script>

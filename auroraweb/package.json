@@ -15,7 +15,6 @@
     "axios": "^1.7.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
-    "element-plus": "^2.7.5",
     "jquery": "^3.7.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2"
