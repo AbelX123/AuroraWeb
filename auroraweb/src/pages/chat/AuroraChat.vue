@@ -42,7 +42,7 @@ const route = useRoute();
 const contentId = ref((route.query.contentId as string) || "");
 const searchInput = ref((route.query.search_input as string) || "");
 
-const { message, connectWebSocket, sendMessage, socket } = useWebSocket(
+const { message, connectWebSocket, sendMessage } = useWebSocket(
   "ws://localhost:8080/ask"
 );
 
@@ -121,12 +121,7 @@ const handleChat = (ask: string) => {
     ask: ask,
     answer: "",
   };
-  if (current_history.value.length == 1 && current_history.value[0].ask == "") {
-    current_history.value[0] = current_history_last;
-  } else {
-    current_history.value.push(current_history_last);
-  }
-
+  
   // 使用websocket发送给后端
   let websocketAsk = {
     userId: "abc",
@@ -136,15 +131,23 @@ const handleChat = (ask: string) => {
       current_history.value[current_history.value.length - 1].detailId,
   };
   sendMessage(JSON.stringify(websocketAsk));
+  console.log("发送消息", websocketAsk);
 
-  // 处理返回信息
+  if(current_history.value.length == 1 && current_history.value[0].detailId == "") {
+    current_history.value.pop();
+  }
+  current_history.value.push(current_history_last);
 
   // 监听 message 变化并处理返回信息
   watch(message, (newValue) => {
     try {
+      console.log("监听消息", message, "--", newValue);
       const data = JSON.parse(newValue);
-      current_history.value[current_history.value.length - 1].answer =
-        data.data;
+      const finalResult = data.data;
+      const fRJ = JSON.parse(finalResult);
+      contentId.value = fRJ.contentId;
+      current_history.value[current_history.value.length - 1].detailId = fRJ.detailId;
+      current_history.value[current_history.value.length - 1].answer = fRJ.answer;
       scrollToBottom();
     } catch (error) {
       console.error("Error parsing WebSocket message:", error);
