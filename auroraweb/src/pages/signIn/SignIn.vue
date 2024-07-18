@@ -21,7 +21,9 @@
 import { ref } from "vue";
 import { useUser } from "@/hocks/useUser";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/user";
 
+const userStore = useUserStore();
 const router = useRouter();
 
 // 解构useUser
@@ -40,8 +42,15 @@ function toHome() {
   signIn(signInParam.value)
     .then((result) => {
       if (result.status == "0000") {
+        // 将后端返回的用户信息存入userStore供全局使用
+        let { userId, username, token, refreshToken } = result.data;
+        userStore.$patch({
+          userId: userId,
+          username: username,
+          token: token,
+          refresh_token: refreshToken,
+        });
         alert("登录成功");
-        console.log(result)
         // 跳转到首页
         router.push({
           path: "/home",

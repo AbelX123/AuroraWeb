@@ -37,6 +37,10 @@ import { useChat } from "@/hocks/useChat";
 import Avatar from "@/components/avatar/AvatarComponent.vue";
 import Footer from "@/components/footer/FooterComponet.vue";
 import { useWebSocket } from "@/hocks/useWebSocket";
+import { useUserStore } from "@/store/user";
+
+const userStore = useUserStore()
+
 // 取出contentId
 const route = useRoute();
 const contentId = ref((route.query.contentId as string) || "");
@@ -70,7 +74,7 @@ const current_history = ref([
 
 // 查询参数
 const contentQuery = ref({
-  userId: "abc",
+  userId: userStore.userId,
   contentId: contentId,
   pageNo: 1,
   pageSize: 30,
@@ -124,14 +128,13 @@ const handleChat = (ask: string) => {
   
   // 使用websocket发送给后端
   let websocketAsk = {
-    userId: "abc",
+    userId: userStore.userId,
     contentId: contentId.value,
     ask: ask,
     previousDetailId:
       current_history.value[current_history.value.length - 1].detailId,
   };
   sendMessage(JSON.stringify(websocketAsk));
-  console.log("发送消息", websocketAsk);
 
   if(current_history.value.length == 1 && current_history.value[0].detailId == "") {
     current_history.value.pop();
@@ -141,7 +144,6 @@ const handleChat = (ask: string) => {
   // 监听 message 变化并处理返回信息
   watch(message, (newValue) => {
     try {
-      console.log("监听消息", message, "--", newValue);
       const data = JSON.parse(newValue);
       const finalResult = data.data;
       const fRJ = JSON.parse(finalResult);

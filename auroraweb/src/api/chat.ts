@@ -1,11 +1,11 @@
-import {get} from '@/utils/request/request'
+import { get } from '@/utils/request/request';
 
 // 获取用户的历史记录
 export function getHistoryApi(contentQuery: any) {
     return get(
         {
             url: '/api/content/getProfileByUserId',
-            data: contentQuery
+            data: contentQuery,
         }
     )
 }

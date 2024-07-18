@@ -60,6 +60,7 @@ import { useChat } from "@/hocks/useChat";
 import { onMounted, ref } from "vue";
 import SideBar from "./sideBar";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/user";
 
 // 会话钩子解构
 const { getHistory } = useChat();
@@ -76,14 +77,16 @@ const {
   activeState,
 } = SideBar;
 
+// userStore
+const userStore = useUserStore();
+
 const contentQuery = ref({
-  userId: "abc",
+  userId: userStore.userId,
   pageNo: 1,
   pageSize: 30,
 });
 
 onMounted(() => {
-  // 获取当前用户历史记录
   getHistory(contentQuery.value)
     .then((result) => {
       allProfiles.value = result.data.allProfiles;
@@ -106,7 +109,7 @@ function handleScroll() {
       .then((result) => {
         // 将结果追加到allProfiles中
         let newArray = result.data.allProfiles;
-        for(let entry of newArray) {
+        for (let entry of newArray) {
           mergeProfiles(allProfiles.value, entry);
         }
       })
@@ -117,7 +120,7 @@ function handleScroll() {
 }
 
 // 合并函数
-function mergeProfiles(existingData:any, newEntry:any) {
+function mergeProfiles(existingData: any, newEntry: any) {
   let found = false;
   // 遍历现有数据
   for (let item of existingData) {
@@ -130,8 +133,8 @@ function mergeProfiles(existingData:any, newEntry:any) {
   }
   // 不相同添加新的条目
   if (!found) {
-      existingData.push(newEntry);
-    }
+    existingData.push(newEntry);
+  }
 }
 
 // 编程式路由

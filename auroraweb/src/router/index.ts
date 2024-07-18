@@ -33,6 +33,11 @@ const routes = [
             }
         ]
     },
+    {
+        path: '/:catchall(.*)',
+        name: '404',
+        component: () => import("@/pages/404/NotFound.vue")
+    },
 ]
 const router = createRouter({
     history: createWebHistory(),

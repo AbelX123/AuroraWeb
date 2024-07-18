@@ -27,7 +27,7 @@ function http<T = any>(
 ) {
     const successHandler = (res: AxiosResponse<Response<T>>) => {
         if (res.data.status === '0000') {
-            return  res.data
+            return res.data
         }
         if (res.data.message === 'Unauthorized') {
             window.location.reload()
@@ -41,6 +41,7 @@ function http<T = any>(
         throw new Error(error?.message || 'Error')
     }
 
+    // 如果beforeRequest存在就执行函数调用
     beforeRequest?.()
 
     method = method || 'GET'
@@ -48,18 +49,22 @@ function http<T = any>(
     const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
 
     return method === 'GET'
-        ? request.get(url, { params }).then(successHandler, failHandler)
+        ? request.get(url, {
+            params: params,
+            headers: headers,
+        }).then(successHandler, failHandler)
         : request.post(url, params, { headers }).then(successHandler, failHandler)
 }
 
 // get方法
 export function get<T = any>(
-    { url, data, method = 'GET', beforeRequest, afterRequest }: HttpOption,
+    { url, data, method = 'GET', headers, beforeRequest, afterRequest }: HttpOption,
 ): Promise<Response<T>> {
     return http<T>({
         url,
         method,
         data,
+        headers,
         beforeRequest,
         afterRequest,
     })
