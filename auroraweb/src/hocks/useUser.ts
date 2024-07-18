@@ -1,4 +1,4 @@
-import { signUpApi } from '@/api/user';
+import { signUpApi, signInApi } from '@/api/user';
 
 export function useUser() {
 
@@ -8,5 +8,10 @@ export function useUser() {
         return await signUpApi(signUpParam);
     }
 
-    return { signUp }
+    // 登录
+    async function signIn(signInParam:any) {
+        return await signInApi(signInParam)
+    }
+
+    return { signUp, signIn }
 }

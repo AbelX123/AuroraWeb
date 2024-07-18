@@ -47,6 +47,9 @@
 <script setup lang="ts" name="SignUp">
 import { reactive, ref, onMounted, watch } from "vue";
 import { useUser } from "@/hocks/useUser";
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 // 解构useUser
 const { signUp } = useUser();
@@ -172,7 +175,13 @@ function submitSignUp() {
     };
     signUp(signUpParam)
       .then((result) => {
-        console.log("signUp success return ", result.data);
+        if(result.status == '0000') {
+          alert("注册成功")
+          // 跳转到登录页面
+          router.push({
+            path: '/signIn'
+          })
+        }
       })
       .catch((error) => {
         alert(error.message)
