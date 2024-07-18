@@ -1,37 +1,7 @@
-<template>
-  <div class="container">
-    <div class="logindiv">
-      <span>Sign In!</span>
-      <input placeholder="用户名" type="email" />
-      <input placeholder="密码" type="password" />
-      <input class="submit" type="submit" @click="toHome" />
-      <div class="noaccount">
-        <p>还没有账号?</p>
-        <router-link class="link" to="/SignUp">Sign Up !</router-link>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup lang="ts" name="SignIn">
-
-import { useRouter } from 'vue-router';
-
-const router = useRouter()
-
-function toHome() {
-  router.push({
-    path: '/home'
-  })
-}
-
-</script>
-
-<style scoped lang="less">
 .container {
   background-color: rgb(243, 241, 241);
   position: fixed;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -54,7 +24,9 @@ function toHome() {
       font-weight: 900;
     }
 
-    input {
+    .username,
+    .password,
+    .submit {
       display: block;
       margin-left: 50%;
       transform: translateX(-50%);
@@ -68,7 +40,7 @@ function toHome() {
     }
 
     .submit {
-      margin-top: 40px;
+      margin-top: 35px;
       height: 40px;
       width: 30%;
     }
@@ -89,6 +61,36 @@ function toHome() {
         margin-left: 10px;
       }
     }
+
+    .code {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 auto;
+      margin-top: 20px;
+      height: 30px;
+      width: 200px;
+
+      .number-code-canvas {
+        background-color: rgb(244, 241, 241);
+        height: 30px;
+        width: 100px;
+        height: 100%;
+        margin-left: 10px;
+        border: 1px solid black;
+        border-radius: 10px;
+      }
+
+      .number-code-input {
+        background-color: rgb(244, 241, 241);
+        text-indent: 2px;
+        display: inline-block;
+        height: 100%;
+        width: 90px;
+        border: 1px solid black;
+        border-radius: 10px;
+      }
+    }
   }
 }
-</style>

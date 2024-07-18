@@ -1,9 +1,24 @@
+
+<style scoped lang="less">
+@import "./signUp.less";
+</style>
+
 <template>
   <div class="container">
     <div class="logindiv">
       <span>Sign Up!</span>
-      <input class="username" placeholder="用户名" type="email" />
-      <input class="password" placeholder="密码" type="password" />
+      <input
+        class="username"
+        v-model="username"
+        placeholder="用户名"
+        type="email"
+      />
+      <input
+        class="password"
+        v-model="password"
+        placeholder="密码"
+        type="password"
+      />
       <div class="code">
         <input
           class="number-code-input"
@@ -11,7 +26,14 @@
           placeholder="图形验证码"
           v-model="numberCode"
         />
-        <canvas ref="canvas" :width="state.contentWidth" :height="state.contentHeight" class="number-code-canvas" @click="changeCanvasVal">图形验证码</canvas>
+        <canvas
+          ref="canvas"
+          :width="state.contentWidth"
+          :height="state.contentHeight"
+          class="number-code-canvas"
+          @click="changeCanvasVal"
+          >图形验证码</canvas
+        >
       </div>
       <input class="submit" type="submit" @click="submitSignUp" />
       <div class="noaccount">
@@ -24,6 +46,14 @@
 
 <script setup lang="ts" name="SignUp">
 import { reactive, ref, onMounted, watch } from "vue";
+import { useUser } from "@/hocks/useUser";
+
+// 解构useUser
+const { signUp } = useUser();
+
+const username = ref();
+const password = ref();
+
 const canvas = ref();
 const state = reactive({
   contentWidth: 100,
@@ -39,9 +69,7 @@ watch(
   () => {
     return state.identifyCode;
   },
-  (newVal) => {
-    
-  }
+  () => {}
 );
 // 随机数字
 const randomNum = (min: any, max: any) => {
@@ -94,7 +122,7 @@ const draw = () => {
   ctx.fillRect(0, 0, state.contentWidth, state.contentHeight);
   // 绘制文字
   let identifyCode = "";
- 
+
   for (let i = 0; i < state.count; i++) {
     //控制字数
     // drawText(ctx, state.identifyCode[i], i);
@@ -104,9 +132,9 @@ const draw = () => {
     var deg = randomNum(-10, 10);
     ctx.font = randomNum(18, 40) + "px Arial"; //字体大小
     ctx.fillStyle = randomColor(50, 160); //字体颜色
- 
+
     ctx.textBaseline = "middle";
- 
+
     ctx.save();
     //文字依次随机的上下左右
     let x = (state.contentWidth / state.count) * i + 10;
@@ -129,112 +157,29 @@ const changeCanvasVal = () => {
   state.identifyCode = draw();
 };
 
-const numberCode = ref()
+const numberCode = ref();
 // 注册提交
 function submitSignUp() {
   // 比较验证码
-  if(state.identifyCode != numberCode.value) {
-    alert("图形验证码错误")
+  if (state.identifyCode != numberCode.value) {
+    alert("图形验证码错误");
+    changeCanvasVal();
+  } else {
+    // 调用注册
+    let signUpParam = {
+      username: username.value,
+      password: password.value,
+    };
+    signUp(signUpParam)
+      .then((result) => {
+        console.log("signUp success return ", result.data);
+      })
+      .catch((error) => {
+        alert(error.message)
+        // 刷新页面
+        location.reload();
+      });
   }
 }
-
 </script>
 
-<style scoped lang="less">
-.container {
-  background-color: rgb(243, 241, 241);
-  position: fixed;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .logindiv {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    border-radius: 30px;
-    width: 24%;
-    height: 50%;
-
-    span {
-      margin: 0 auto;
-      font-size: 30px;
-      color: black;
-      margin-top: 60px;
-      margin-bottom: 20px;
-      font-weight: 900;
-    }
-
-    .username,
-    .password,
-    .submit {
-      display: block;
-      margin-left: 50%;
-      transform: translateX(-50%);
-      margin-top: 20px;
-      text-indent: 2px;
-      width: 200px;
-      height: 30px;
-      background-color: rgb(244, 241, 241);
-      border: 1px solid black;
-      border-radius: 10px;
-    }
-
-    .submit {
-      margin-top: 35px;
-      height: 40px;
-      width: 30%;
-    }
-
-    .submit:hover {
-      background-color: rgb(206, 213, 216);
-      cursor: pointer;
-    }
-
-    .noaccount {
-      margin: 0 auto;
-      margin-top: 20px;
-      p {
-        display: inline-block;
-      }
-
-      .link {
-        margin-left: 10px;
-      }
-    }
-
-    .code {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      margin: 0 auto;
-      margin-top: 20px;
-      height: 30px;
-      width: 200px;
-
-      .number-code-canvas {
-        background-color: rgb(244, 241, 241);
-        height: 30px;
-        width: 100px;
-        height: 100%;
-        margin-left: 10px;
-        border: 1px solid black;
-        border-radius: 10px;
-      }
-
-      .number-code-input {
-        background-color: rgb(244, 241, 241);
-        text-indent: 2px;
-        display: inline-block;
-        height: 100%;
-        width: 90px;
-        border: 1px solid black;
-        border-radius: 10px;
-      }
-    }
-  }
-}
-</style>
