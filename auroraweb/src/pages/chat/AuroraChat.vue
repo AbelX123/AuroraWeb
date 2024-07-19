@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts" name="">
-import { onMounted, ref, watch, nextTick, onBeforeMount } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useChat } from "@/hocks/useChat";
 import Avatar from "@/components/avatar/AvatarComponent.vue";
@@ -53,8 +53,10 @@ const { message, connectWebSocket, sendMessage } = useWebSocket(
 // 版心末端
 const scrollContainer = ref<HTMLElement | null>(null);
 
-const scrollToBottom = async () => {
-  await nextTick();
+const scrollToBottom = () => {
+  // 在数据更新后马上操作 DOM，可能无法获取到最新的 DOM 状态。
+  // 通过 nextTick ，可以确保在 DOM 更新完成后再执行相关操作
+  // await nextTick();
   if (scrollContainer.value) {
     scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
   }
@@ -102,12 +104,9 @@ watch(
 
 watch(current_history, scrollToBottom);
 
-onBeforeMount(() => {
+onMounted(() => {
   // 初始化websocket连接
   connectWebSocket();
-});
-
-onMounted(() => {
   if (contentId.value != null && contentId.value != "") {
     // 获取内容
     getContentDetail();

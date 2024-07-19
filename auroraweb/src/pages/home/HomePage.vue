@@ -12,7 +12,7 @@
     </div>
 </template>
 
-<script setup lang="ts" name="IndexComponent">
+<script setup lang="ts" name="HomePage">
 import SideBar from '@/components/sideBar/SideBar.vue'
 import { RouterView } from 'vue-router';
 </script>

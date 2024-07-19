@@ -28,7 +28,7 @@ const routes = [
             },
             {
                 path: 'company',
-                name: 'compmay',
+                name: 'company',
                 component: () => import("@/pages/company/AuroraCompany.vue")
             }
         ]

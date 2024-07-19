@@ -1,33 +1,54 @@
 .right-top {
-    display: flex;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  height: 60px;
+
+  .right-top-username {
+    position: relative;
+    height: 40px;
+    margin-right: 10px;
+    text-align: center;
+    span {
+      color: black;
+      font-size: 20px;
+      line-height: 40px;
+    }
+  }
+
+  .right-top-avatar {
+    justify-content: center;
     align-items: center;
-    justify-content: right;
-    height: 60px;
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+    box-sizing: border-box;
+    border-radius: 50%;
 
-    .right-top-username {
-        position: relative;
-        height: 40px;
-        margin-right: 10px;
-        text-align: center;
-        span {
-            color: black;
-            font-size: 20px;
-            line-height: 40px;
-        }
+    img {
+      height: 40px;
+      border-radius: 50%;
     }
+  }
 
-    .right-top-avatar {
-        justify-content: center;
-        align-items: center;
-        width: 40px;
-        height: 40px;
-        margin-right: 20px;
-        box-sizing: border-box;
-        border-radius: 50%;
+  .logout {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    margin-right: 5px;
+    height: 150px;
+    width: 100px;
+    border-radius: 20px;
 
-        img {
-            height: 40px;
-            border-radius: 50%;
-        }
+    button {
+        width: 100px;
+        height: 30px;
+        background-color: lightgray;
+        border-radius: 20px;
+        font-size: 13px;
     }
+  }
 }
