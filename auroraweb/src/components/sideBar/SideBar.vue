@@ -10,7 +10,7 @@
         <span class="tooltiptext">收起侧边栏</span>
         <img src="@/assets/images/callapse-panel.svg" />
       </div>
-      <div class="left-top-new-chat" @click="showCompany">
+      <div class="left-top-new-chat" @click="toChat">
         <span class="tooltiptext">新建会话</span>
         <img src="@/assets/images/new-chat.svg" />
       </div>
@@ -60,6 +60,7 @@ import { useChat } from "@/hocks/useChat";
 import { onMounted, ref } from "vue";
 import SideBar from "./sideBar";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
 
 // 会话钩子解构
@@ -68,6 +69,9 @@ const { getHistory } = useChat();
 // 用户的历史记录
 const allProfiles = ref();
 
+// url contentId
+const route = useRoute();
+
 // 页面行为解构
 const {
   handleMouseEnterEllipsis,
@@ -75,6 +79,7 @@ const {
   handleMouseLeaveEllipsis,
   isHidden,
   activeState,
+  notActiveState,
 } = SideBar;
 
 // userStore
@@ -87,6 +92,7 @@ const contentQuery = ref({
 });
 
 onMounted(() => {
+  activeState(route.params.contentId as string);
   getHistory(contentQuery.value)
     .then((result) => {
       allProfiles.value = result.data.allProfiles;
@@ -94,7 +100,6 @@ onMounted(() => {
     .catch((error) => {
       console.log(error);
     });
-  showCompany();
 });
 
 const container = ref();
@@ -140,21 +145,34 @@ function mergeProfiles(existingData: any, newEntry: any) {
 // 编程式路由
 const router = useRouter();
 
-// 渲染初始会话组件
-function showCompany() {
-  router.push({
-    path: "/home/company",
-  });
-}
-
 function showCurrentContent(contentId: string) {
   activeState(contentId);
   // 渲染对话组件
   router.push({
-    path: "/home/chat",
-    query: {
-      contentId: contentId,
-    },
+    path: `/chat/${contentId}`,
   });
 }
+
+function toChat() {
+  notActiveState();
+  router.push({
+    path: "/chat",
+  });
+}
+
+const doSomething = (contentId: string) => {
+  router.push({
+    path: `/chat/${contentId}`,
+  });
+  getHistory(contentQuery.value)
+    .then((result) => {
+      allProfiles.value = result.data.allProfiles;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  activeState(contentId);
+};
+
+defineExpose({ doSomething });
 </script>

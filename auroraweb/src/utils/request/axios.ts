@@ -24,6 +24,7 @@ request.interceptors.request.use((request) => {
 
 // 添加响应拦截器
 request.interceptors.response.use((response) => {
+    // 如果未授权跳转登录页面
     return response;
 }, function (error) {
     return Promise.reject(error);

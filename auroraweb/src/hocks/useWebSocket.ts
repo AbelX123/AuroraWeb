@@ -25,7 +25,7 @@ export function useWebSocket(url: string) {
     const sendMessage = (msg: any) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(msg);
-        }else{ // 等500毫秒再发
+        } else { // 等500毫秒再发
             setTimeout(sendMessage, 500, msg)
         }
     };

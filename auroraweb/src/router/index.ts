@@ -17,21 +17,10 @@ const routes = [
         component: () => import("@/pages/signIn/SignIn.vue")
     },
     {
-        path: '/home',
-        name: 'home',
-        component: () => import("@/pages/home/HomePage.vue"),
-        children: [
-            {
-                path: 'chat',
-                name: 'chat',
-                component: () => import("@/pages/chat/AuroraChat.vue")
-            },
-            {
-                path: 'company',
-                name: 'company',
-                component: () => import("@/pages/company/AuroraCompany.vue")
-            }
-        ]
+        path: '/chat/:contentId?',
+        name: 'chat',
+        props: true,
+        component: () => import("@/pages/chat/AuroraChat.vue")
     },
     {
         path: '/:catchall(.*)',

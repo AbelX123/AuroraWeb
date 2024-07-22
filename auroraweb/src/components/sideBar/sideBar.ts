@@ -29,4 +29,8 @@ function activeState(id: string) {
     activeItemId.value = id === activeItemId.value ? null : id;
 }
 
-export default { activeItemId, hoveredBox, handleMouseEnterEllipsis, isActice, handleMouseLeaveEllipsis, isHidden, activeState }
+function notActiveState() {
+    activeItemId.value = null;
+}
+
+export default { activeItemId, hoveredBox, handleMouseEnterEllipsis, isActice, handleMouseLeaveEllipsis, isHidden, activeState, notActiveState }

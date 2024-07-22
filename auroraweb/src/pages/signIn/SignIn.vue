@@ -53,7 +53,7 @@ function toHome() {
         alert("登录成功");
         // 跳转到首页
         router.push({
-          path: "/home",
+          path: "/chat",
         });
       }
     })
