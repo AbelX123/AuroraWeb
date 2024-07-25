@@ -1,5 +1,5 @@
 # 介绍
-前端地址：#https://github.com/AbelX123/AuroraWeb
+后端地址：#https://github.com/AbelX123/AuroraServer
 描述：ai-aurora提供一个使用ai文本问答的客户端示例，ai基于百度文心一言。
 # 框架
 
