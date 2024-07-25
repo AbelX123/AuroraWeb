@@ -38,7 +38,9 @@
 | mysql-8.0.39    |
 | redis-6.2.6     |
 # 功能介绍
-登录验证返回刷新令牌和之后请求携带的令牌
-![[Pasted image 20240725172158.png]]
-注册图形验证，重复校验
-![[Pasted image 20240725172329.png]]![[Pasted image 20240725172534.png]]
+登录验证返回刷新令牌和之后请求携带的令牌<br/>
+<img width="515" alt="image" src="https://github.com/user-attachments/assets/51bc1ecf-9236-46fb-b76e-bb6a3ad2f3da"><br/>
+注册图形验证，重复校验<br/>
+<img width="504" alt="image" src="https://github.com/user-attachments/assets/4a50737f-0614-4211-b7fe-9638a1af8c7a"><br/>
+主要功能页<br/>
+<img width="1902" alt="image" src="https://github.com/user-attachments/assets/e1a9cc4d-3646-4eb7-bed9-52b96f99dc49">
