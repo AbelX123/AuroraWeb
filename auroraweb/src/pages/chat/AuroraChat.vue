@@ -34,12 +34,11 @@
 </template>
 
 <script setup lang="ts" name="">
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useChat } from "@/hocks/useChat";
 import Avatar from "@/components/avatar/AvatarComponent.vue";
 import Footer from "@/components/footer/FooterComponet.vue";
-import { useWebSocket } from "@/hocks/useWebSocket";
 import { useUserStore } from "@/store/user";
 import SideBar from "@/components/sideBar/SideBar.vue";
 
@@ -59,17 +58,70 @@ interface HistoryItem {
   answer: string;
 }
 const current_history = ref<HistoryItem[]>([]);
-const { message, connectWebSocket, sendMessage } = useWebSocket(
-  "ws://localhost:8080/ask"
-);
 
 // 初始化
 onMounted(() => {
   // 初始化websocket连接
-  connectWebSocket();
+  setUpWebSocket();
   getContentDetail();
-  scrollToBottom;
+  scrollToBottom();
 });
+
+onBeforeUnmount(() => {
+  if (websocket.value) {
+    websocket.value.close();
+  }
+});
+
+// *****************************************  Begin *****************************************
+const websocket = ref();
+const sentenceQueue = ref<string[]>([]);
+const isRendering = ref(false);
+// 初始化websokcet连接
+function setUpWebSocket() {
+  websocket.value = new WebSocket("ws://localhost:8080/ask");
+  websocket.value.onmessage = (event: MessageEvent) => {
+    sentenceQueue.value.push(event.data);
+    processQueue();
+  };
+}
+// 渲染
+function processQueue() {
+  if (!isRendering.value && sentenceQueue.value.length > 0) { // 如果没有在渲染且队列长度大于0
+    isRendering.value = true;
+    renderSentence(sentenceQueue.value.shift() as string);
+  }
+}
+function renderSentence(sentence: string) {
+  const fRJ = JSON.parse(JSON.parse(sentence).data);
+  contentId.value = fRJ.contentId;
+  current_history.value[current_history.value.length - 1].detailId =
+    fRJ.detailId;
+
+  let answer = fRJ.answer;
+  let index = 0;
+  const renderInterval = setInterval(() => {
+    if (index < answer.length) {
+      current_history.value[current_history.value.length - 1].answer +=
+        answer.charAt(index);
+      index++;
+    } else {
+      clearInterval(renderInterval);
+      isRendering.value = false;
+      processQueue();
+    }
+    scrollToBottom();
+  }, 100);
+}
+const sendMessage = (msg: any) => {
+  if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
+    websocket.value.send(msg);
+  } else {
+    // 等500毫秒再发
+    setTimeout(sendMessage, 500, msg);
+  }
+};
+// *****************************************  End *****************************************
 
 // 处理输入框
 function handleChat(ask: string) {
@@ -95,27 +147,6 @@ function handleChat(ask: string) {
   sendMessage(JSON.stringify(websocketAsk));
   scrollToBottom();
 }
-
-// 监听 message 变化并处理返回信息
-watch(message, (newValue) => {
-  try {
-    const data = JSON.parse(newValue);
-    const finalResult = data.data;
-    const fRJ = JSON.parse(finalResult);
-    contentId.value = fRJ.contentId;
-    current_history.value[current_history.value.length - 1].detailId =
-      fRJ.detailId;
-    current_history.value[current_history.value.length - 1].answer = fRJ.answer;
-  } catch (error) {
-    console.error("Error parsing WebSocket message:", error);
-  }
-  scrollToBottom();
-  if (current_history.value.length === 1) {
-    if (sideBar.value) {
-      sideBar.value.doSomething(contentId.value as string);
-    }
-  }
-});
 
 // 版心末端
 const scrollContainer = ref<HTMLElement | null>(null);
