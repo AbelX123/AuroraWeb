@@ -87,7 +87,8 @@ function setUpWebSocket() {
 }
 // 渲染
 function processQueue() {
-  if (!isRendering.value && sentenceQueue.value.length > 0) { // 如果没有在渲染且队列长度大于0
+  if (!isRendering.value && sentenceQueue.value.length > 0) {
+    // 如果没有在渲染且队列长度大于0
     isRendering.value = true;
     renderSentence(sentenceQueue.value.shift() as string);
   }
@@ -99,6 +100,15 @@ function renderSentence(sentence: string) {
     fRJ.detailId;
 
   let answer = fRJ.answer;
+
+  if (answer === "") {
+    if (current_history.value.length === 1) {
+      if (sideBar.value) {
+        sideBar.value.doSomething(contentId.value as string);
+      }
+    }
+  }
+
   let index = 0;
   const renderInterval = setInterval(() => {
     if (index < answer.length) {
